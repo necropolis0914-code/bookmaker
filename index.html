@@ -341,7 +341,7 @@
         <div class="team-stats">
           <div>
             <div class="label">賭け金合計</div>
-            <div id="redTotal" class="big">0 <small>Gil</small></div>
+            <div id="redTotal" class="big">0 <small>G</small></div>
           </div>
           <div>
             <div class="label">現在オッズ</div>
@@ -355,7 +355,7 @@
         <div class="team-stats">
           <div>
             <div class="label">賭け金合計</div>
-            <div id="blueTotal" class="big">0 <small>Gil</small></div>
+            <div id="blueTotal" class="big">0 <small>G</small></div>
           </div>
           <div>
             <div class="label">現在オッズ</div>
@@ -372,15 +372,15 @@
           <div class="summary-stats">
             <div>
               <div class="label">総プール</div>
-              <div id="poolTotal" class="big">0 <small>Gil</small></div>
+              <div id="poolTotal" class="big">0 <small>G</small></div>
             </div>
             <div>
               <div class="label">基本胴元利益</div>
-              <div id="baseHouseProfit" class="big">0 <small>Gil</small></div>
+              <div id="baseHouseProfit" class="big">0 <small>G</small></div>
             </div>
             <div>
               <div class="label">払戻原資</div>
-              <div id="payoutPool" class="big">0 <small>Gil</small></div>
+              <div id="payoutPool" class="big">0 <small>G</small></div>
             </div>
           </div>
         </div>
@@ -391,11 +391,11 @@
             <div class="result-stats">
               <div>
                 <div class="label">赤側への払戻額</div>
-                <div id="redWinPayout" class="big">0 <small>Gil</small></div>
+                <div id="redWinPayout" class="big">0 <small>G</small></div>
               </div>
               <div>
                 <div class="label">胴元利益</div>
-                <div id="redWinProfit" class="big gold-text">0 <small>Gil</small></div>
+                <div id="redWinProfit" class="big gold-text">0 <small>G</small></div>
               </div>
             </div>
           </div>
@@ -405,18 +405,18 @@
             <div class="result-stats">
               <div>
                 <div class="label">青側への払戻額</div>
-                <div id="blueWinPayout" class="big">0 <small>Gil</small></div>
+                <div id="blueWinPayout" class="big">0 <small>G</small></div>
               </div>
               <div>
                 <div class="label">胴元利益</div>
-                <div id="blueWinProfit" class="big gold-text">0 <small>Gil</small></div>
+                <div id="blueWinProfit" class="big gold-text">0 <small>G</small></div>
               </div>
             </div>
           </div>
 
           <div class="card minimum-card">
             <h2 class="gold-text">最低保証利益</h2>
-            <div id="minimumProfit" class="big gold-text">0 <small>Gil</small></div>
+            <div id="minimumProfit" class="big gold-text">0 <small>G</small></div>
             <p class="small-note">※ 赤・青どちらが勝っても、最低でも残る胴元利益です。</p>
           </div>
         </div>
@@ -485,8 +485,8 @@
       return Math.floor(value).toLocaleString("ja-JP");
     }
 
-    function formatGil(value) {
-      return `${formatNumber(value)} <small>Gil</small>`;
+    function formatG(value) {
+      return `${formatNumber(value)} <small>G</small>`;
     }
 
     function calcTotal(team) {
@@ -522,20 +522,20 @@
       const blueWinProfit = poolTotal - blueWinPayout;
       const minimumProfit = Math.min(redWinProfit, blueWinProfit);
 
-      document.getElementById("redTotal").innerHTML = formatGil(redTotal);
-      document.getElementById("blueTotal").innerHTML = formatGil(blueTotal);
-      document.getElementById("poolTotal").innerHTML = formatGil(poolTotal);
-      document.getElementById("baseHouseProfit").innerHTML = formatGil(baseHouseProfit);
-      document.getElementById("payoutPool").innerHTML = formatGil(payoutPool);
+      document.getElementById("redTotal").innerHTML = formatG(redTotal);
+      document.getElementById("blueTotal").innerHTML = formatG(blueTotal);
+      document.getElementById("poolTotal").innerHTML = formatG(poolTotal);
+      document.getElementById("baseHouseProfit").innerHTML = formatG(baseHouseProfit);
+      document.getElementById("payoutPool").innerHTML = formatG(payoutPool);
 
       document.getElementById("redOdds").textContent = redOdds ? redOdds.toFixed(2) + "倍" : "-";
       document.getElementById("blueOdds").textContent = blueOdds ? blueOdds.toFixed(2) + "倍" : "-";
 
-      document.getElementById("redWinPayout").innerHTML = formatGil(redWinPayout);
-      document.getElementById("blueWinPayout").innerHTML = formatGil(blueWinPayout);
-      document.getElementById("redWinProfit").innerHTML = formatGil(redWinProfit);
-      document.getElementById("blueWinProfit").innerHTML = formatGil(blueWinProfit);
-      document.getElementById("minimumProfit").innerHTML = formatGil(minimumProfit);
+      document.getElementById("redWinPayout").innerHTML = formatG(redWinPayout);
+      document.getElementById("blueWinPayout").innerHTML = formatG(blueWinPayout);
+      document.getElementById("redWinProfit").innerHTML = formatG(redWinProfit);
+      document.getElementById("blueWinProfit").innerHTML = formatG(blueWinProfit);
+      document.getElementById("minimumProfit").innerHTML = formatG(minimumProfit);
 
       const statusText = document.getElementById("statusText");
       statusText.textContent = isClosed ? "締切済 / CLOSED" : "受付中 / OPEN";
@@ -554,7 +554,7 @@
         row.innerHTML = `
           <td>${index + 1}</td>
           <td>${bet.team === "red" ? "赤チーム" : "青チーム"}</td>
-          <td>${formatNumber(bet.amount)} Gil</td>
+          <td>${formatNumber(bet.amount)} G</td>
           <td><button class="delete" onclick="deleteBet(${index})">削除</button></td>
         `;
         historyBody.appendChild(row);
