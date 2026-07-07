@@ -4,7 +4,7 @@ FF14 Colosseo用 ブックメーカーオッズ計算アプリ
 
 ## 公開URL
 
-https://scaletraveler-bit.github.io/bookmaker/
+
 
 ## 機能
 
