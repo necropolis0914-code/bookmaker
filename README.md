@@ -1,6 +1,6 @@
 # Colosseo BookMaker
 
-FF14 Colosseo用 ブックメーカーオッズ計算アプリ
+ブックメーカーオッズ計算アプリ
 
 ## 公開URL
 
