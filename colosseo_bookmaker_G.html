@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Colosseo BookMaker</title>
+  <style>
+    :root {
+      --bg: #0b1118;
+      --panel: rgba(17, 24, 39, 0.92);
+      --panel-2: rgba(15, 23, 42, 0.94);
+      --border: rgba(148, 163, 184, 0.22);
+      --text: #f9fafb;
+      --muted: #cbd5e1;
+      --red: #dc2626;
+      --red-dark: rgba(127, 29, 29, 0.55);
+      --blue: #2563eb;
+      --blue-dark: rgba(30, 64, 175, 0.45);
+      --gold: #facc15;
+      --green: #22c55e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(30, 41, 59, 0.8), transparent 38%),
+        linear-gradient(180deg, #071018 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .header-image {
+      width: 100%;
+      display: block;
+      border-radius: 16px 16px 8px 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(250, 204, 21, 0.25);
+    }
+
+    .status {
+      text-align: center;
+      font-size: 24px;
+      margin: 12px 0 14px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .open { color: var(--green); }
+    .closed { color: #ef4444; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(31, 41, 55, 0.96), rgba(15, 23, 42, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .control-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.35fr 1fr 1fr 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(3, 7, 18, 0.65);
+      color: var(--text);
+      font-size: 17px;
+      outline: none;
+      box-shadow: inset 0 1px 10px rgba(0,0,0,.35);
+    }
+
+    input:focus {
+      border-color: rgba(250, 204, 21, 0.55);
+    }
+
+    .unit {
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    button {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.12);
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 8px 18px rgba(0,0,0,.25);
+    }
+
+    button:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .red-btn { background: linear-gradient(180deg, #dc2626, #7f1d1d); }
+    .blue-btn { background: linear-gradient(180deg, #2563eb, #1e3a8a); }
+    .gray-btn { background: linear-gradient(180deg, #64748b, #334155); }
+    .danger-btn { background: linear-gradient(180deg, #991b1b, #450a0a); }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .team-card {
+      min-height: 142px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .team-card h2,
+    .result-card h2,
+    .summary-card h2,
+    .history-card h2,
+    .minimum-card h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      letter-spacing: .03em;
+    }
+
+    .team-red {
+      border-color: rgba(220, 38, 38, 0.55);
+      background: linear-gradient(135deg, var(--red-dark), rgba(15, 23, 42, 0.96) 72%);
+    }
+
+    .team-blue {
+      border-color: rgba(37, 99, 235, 0.55);
+      background: linear-gradient(135deg, var(--blue-dark), rgba(15, 23, 42, 0.96) 72%);
+    }
+
+    .team-stats,
+    .result-stats,
+    .summary-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      padding-top: 12px;
+    }
+
+    .summary-stats {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .big {
+      font-size: clamp(28px, 3.2vw, 38px);
+      font-weight: 900;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .big small {
+      font-size: .55em;
+      font-weight: 800;
+      margin-left: 4px;
+    }
+
+    .red-text { color: #ff6363; }
+    .blue-text { color: #60a5fa; }
+    .gold-text { color: var(--gold); }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr .72fr;
+      gap: 14px;
+    }
+
+    .left-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr .86fr;
+      gap: 14px;
+    }
+
+    .result-card.team-red,
+    .result-card.team-blue,
+    .minimum-card {
+      min-height: 180px;
+    }
+
+    .minimum-card {
+      border-color: rgba(250, 204, 21, 0.48);
+      background: linear-gradient(135deg, rgba(113, 63, 18, 0.42), rgba(15, 23, 42, 0.96));
+    }
+
+    .minimum-card .big {
+      text-align: center;
+      font-size: clamp(32px, 3.8vw, 44px);
+      margin: 16px 0 10px;
+    }
+
+    .small-note {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.65;
+      margin: 8px 0 0;
+    }
+
+    .history-card {
+      align-self: stretch;
+      max-height: 392px;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th { color: var(--muted); font-weight: 800; }
+
+    .delete {
+      min-height: 0;
+      background: linear-gradient(180deg, #475569, #1f2937);
+      padding: 6px 10px;
+      font-size: 12px;
+      margin: 0;
+    }
+
+    @media (max-width: 980px) {
+      .control-panel {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .dashboard-grid,
+      .bottom-grid,
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .history-card {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app { padding: 10px; }
+      .status { font-size: 20px; }
+      .control-panel { grid-template-columns: 1fr; }
+      .summary-stats,
+      .team-stats,
+      .result-stats { grid-template-columns: 1fr; }
+      button { min-height: 56px; font-size: 16px; }
+      .card { padding: 14px; }
+      .header-image { border-radius: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <img src="header.jpg" alt="Colosseo BookMaker" class="header-image" />
+    <div id="statusText" class="status open">受付中 / OPEN</div>
+
+    <div class="card control-panel">
+      <div class="field">
+        <label>胴元率（%）</label>
+        <div class="input-wrap">
+          <input id="houseRate" type="number" value="5" min="0" max="50" step="0.1" />
+          <span class="unit">%</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>最大オッズ（倍）</label>
+        <div class="input-wrap">
+          <input id="maxOdds" type="number" value="5" min="1" step="0.1" />
+          <span class="unit">倍</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>賭け金入力（数字のみ）</label>
+        <input id="betAmount" type="number" placeholder="例：1000" min="1" />
+      </div>
+
+      <button id="addRed" class="red-btn">赤チームに追加</button>
+      <button id="addBlue" class="blue-btn">青チームに追加</button>
+      <button id="toggleClose" class="gray-btn">受付を締め切る</button>
+      <button id="resetAll" class="danger-btn">全リセット</button>
+    </div>
+
+    <div class="main-grid">
+      <div class="card team-card team-red">
+        <h2>赤チーム</h2>
+        <div class="team-stats">
+          <div>
+            <div class="label">賭け金合計</div>
+            <div id="redTotal" class="big">0 <small>G</small></div>
+          </div>
+          <div>
+            <div class="label">現在オッズ</div>
+            <div id="redOdds" class="big red-text">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card team-card team-blue">
+        <h2>青チーム</h2>
+        <div class="team-stats">
+          <div>
+            <div class="label">賭け金合計</div>
+            <div id="blueTotal" class="big">0 <small>G</small></div>
+          </div>
+          <div>
+            <div class="label">現在オッズ</div>
+            <div id="blueOdds" class="big blue-text">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="left-stack">
+        <div class="card summary-card">
+          <h2>集計</h2>
+          <div class="summary-stats">
+            <div>
+              <div class="label">総プール</div>
+              <div id="poolTotal" class="big">0 <small>G</small></div>
+            </div>
+            <div>
+              <div class="label">基本胴元利益</div>
+              <div id="baseHouseProfit" class="big">0 <small>G</small></div>
+            </div>
+            <div>
+              <div class="label">払戻原資</div>
+              <div id="payoutPool" class="big">0 <small>G</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-grid">
+          <div class="card result-card team-red">
+            <h2 class="red-text">赤勝利時</h2>
+            <div class="result-stats">
+              <div>
+                <div class="label">赤側への払戻額</div>
+                <div id="redWinPayout" class="big">0 <small>G</small></div>
+              </div>
+              <div>
+                <div class="label">胴元利益</div>
+                <div id="redWinProfit" class="big gold-text">0 <small>G</small></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card result-card team-blue">
+            <h2 class="blue-text">青勝利時</h2>
+            <div class="result-stats">
+              <div>
+                <div class="label">青側への払戻額</div>
+                <div id="blueWinPayout" class="big">0 <small>G</small></div>
+              </div>
+              <div>
+                <div class="label">胴元利益</div>
+                <div id="blueWinProfit" class="big gold-text">0 <small>G</small></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card minimum-card">
+            <h2 class="gold-text">最低保証利益</h2>
+            <div id="minimumProfit" class="big gold-text">0 <small>G</small></div>
+            <p class="small-note">※ 赤・青どちらが勝っても、最低でも残る胴元利益です。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card history-card">
+        <h2>入力履歴</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>チーム</th>
+              <th>金額</th>
+              <th>削除</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "colosseo-bookmaker-data-v4";
+
+    let bets = [];
+    let isClosed = false;
+
+    const houseRateInput = document.getElementById("houseRate");
+    const maxOddsInput = document.getElementById("maxOdds");
+    const betAmountInput = document.getElementById("betAmount");
+    const addRedBtn = document.getElementById("addRed");
+    const addBlueBtn = document.getElementById("addBlue");
+    const toggleCloseBtn = document.getElementById("toggleClose");
+    const resetAllBtn = document.getElementById("resetAll");
+
+    function saveData() {
+      const data = {
+        bets,
+        isClosed,
+        houseRate: houseRateInput.value,
+        maxOdds: maxOddsInput.value
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+
+      try {
+        const data = JSON.parse(saved);
+        bets = Array.isArray(data.bets) ? data.bets : [];
+        isClosed = Boolean(data.isClosed);
+        houseRateInput.value = data.houseRate ?? 5;
+        maxOddsInput.value = data.maxOdds ?? 5;
+      } catch {
+        bets = [];
+        isClosed = false;
+        houseRateInput.value = 5;
+        maxOddsInput.value = 5;
+      }
+    }
+
+    function formatNumber(value) {
+      return Math.floor(value).toLocaleString("ja-JP");
+    }
+
+    function formatG(value) {
+      return `${formatNumber(value)} <small>G</small>`;
+    }
+
+    function calcTotal(team) {
+      return bets
+        .filter(bet => bet.team === team)
+        .reduce((sum, bet) => sum + bet.amount, 0);
+    }
+
+    function getFinalOdds(teamTotal, payoutPool) {
+      if (teamTotal <= 0) return null;
+
+      const rawOdds = payoutPool / teamTotal;
+      const maxOdds = Number(maxOddsInput.value) || 999;
+      return Math.min(rawOdds, maxOdds);
+    }
+
+    function update() {
+      const redTotal = calcTotal("red");
+      const blueTotal = calcTotal("blue");
+      const poolTotal = redTotal + blueTotal;
+
+      const houseRate = Number(houseRateInput.value) || 0;
+      const baseHouseProfit = poolTotal * (houseRate / 100);
+      const payoutPool = poolTotal - baseHouseProfit;
+
+      const redOdds = getFinalOdds(redTotal, payoutPool);
+      const blueOdds = getFinalOdds(blueTotal, payoutPool);
+
+      const redWinPayout = redOdds ? redTotal * redOdds : 0;
+      const blueWinPayout = blueOdds ? blueTotal * blueOdds : 0;
+
+      const redWinProfit = poolTotal - redWinPayout;
+      const blueWinProfit = poolTotal - blueWinPayout;
+      const minimumProfit = Math.min(redWinProfit, blueWinProfit);
+
+      document.getElementById("redTotal").innerHTML = formatG(redTotal);
+      document.getElementById("blueTotal").innerHTML = formatG(blueTotal);
+      document.getElementById("poolTotal").innerHTML = formatG(poolTotal);
+      document.getElementById("baseHouseProfit").innerHTML = formatG(baseHouseProfit);
+      document.getElementById("payoutPool").innerHTML = formatG(payoutPool);
+
+      document.getElementById("redOdds").textContent = redOdds ? redOdds.toFixed(2) + "倍" : "-";
+      document.getElementById("blueOdds").textContent = blueOdds ? blueOdds.toFixed(2) + "倍" : "-";
+
+      document.getElementById("redWinPayout").innerHTML = formatG(redWinPayout);
+      document.getElementById("blueWinPayout").innerHTML = formatG(blueWinPayout);
+      document.getElementById("redWinProfit").innerHTML = formatG(redWinProfit);
+      document.getElementById("blueWinProfit").innerHTML = formatG(blueWinProfit);
+      document.getElementById("minimumProfit").innerHTML = formatG(minimumProfit);
+
+      const statusText = document.getElementById("statusText");
+      statusText.textContent = isClosed ? "締切済 / CLOSED" : "受付中 / OPEN";
+      statusText.className = isClosed ? "status closed" : "status open";
+
+      addRedBtn.disabled = isClosed;
+      addBlueBtn.disabled = isClosed;
+      betAmountInput.disabled = isClosed;
+      toggleCloseBtn.textContent = isClosed ? "受付を再開する" : "受付を締め切る";
+
+      const historyBody = document.getElementById("historyBody");
+      historyBody.innerHTML = "";
+
+      bets.forEach((bet, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${bet.team === "red" ? "赤チーム" : "青チーム"}</td>
+          <td>${formatNumber(bet.amount)} G</td>
+          <td><button class="delete" onclick="deleteBet(${index})">削除</button></td>
+        `;
+        historyBody.appendChild(row);
+      });
+
+      saveData();
+    }
+
+    function addBet(team) {
+      const amount = Number(betAmountInput.value);
+
+      if (!amount || amount <= 0) {
+        alert("賭け金を数字で入力してください。");
+        return;
+      }
+
+      bets.push({ team, amount });
+      betAmountInput.value = "";
+      update();
+    }
+
+    function deleteBet(index) {
+      bets.splice(index, 1);
+      update();
+    }
+
+    addRedBtn.addEventListener("click", () => addBet("red"));
+    addBlueBtn.addEventListener("click", () => addBet("blue"));
+
+    houseRateInput.addEventListener("input", update);
+    maxOddsInput.addEventListener("input", update);
+
+    toggleCloseBtn.addEventListener("click", () => {
+      isClosed = !isClosed;
+      update();
+    });
+
+    resetAllBtn.addEventListener("click", () => {
+      if (confirm("すべての入力履歴を削除しますか？")) {
+        bets = [];
+        isClosed = false;
+        houseRateInput.value = 5;
+        maxOddsInput.value = 5;
+        localStorage.removeItem(STORAGE_KEY);
+        update();
+      }
+    });
+
+    loadData();
+    update();
+  </script>
+</body>
+</html>
